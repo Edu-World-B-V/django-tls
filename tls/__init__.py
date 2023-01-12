@@ -6,13 +6,17 @@ request = _local('request')
 
 
 class TLSRequestMiddleware(object):
-    def process_request(self, request):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+
+    def __call__(self, request):
         _local.request = request
 
-    def process_response(self, request, response):
+        response = self.get_response(request)
         release_local(_local)
+
         return response
 
     def process_exception(self, request, exception):
         release_local(_local)
-
